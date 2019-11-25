@@ -53,8 +53,7 @@ checkin.createOrReplaceTempView("checkin")
 
 
 # Since there are thousands of categories, we will focus our analysis only on categories such as restaurant, pizza & sandwich.
-# We will also restrict our data to certain popular locations because of the huge data volume.
-business_subset = spark.sql("select b.*, row_number() over(partition by b.state order by b.review_count desc) as rnk from business b where (lower(categories) like '%restaurant%' or lower(categories) like '%pizza%' or lower(categories) like '%sandwich%') and state in ('NV', 'OH', 'NC')")
+business_subset = spark.sql("select b.*, row_number() over(partition by b.state order by b.review_count desc) as rnk from business b where (lower(categories) like '%restaurant%' or lower(categories) like '%pizza%' or lower(categories) like '%sandwich%')")
 
 business_subset.createOrReplaceTempView("business_subset")
 
@@ -88,4 +87,68 @@ checkin_explode_subset=spark.sql("select c.business_id, c.date from checkin_expl
 # Write spark datframe to HDFS
 checkin_explode_subset.write.csv('/data/checkins_by_date_by_business')
 business_reviews.write.csv('/data/business_reviews')
+
+
+# In[62]:
+
+
+reviews_bad_review=spark.sql("select r.text from review r where business_id='DkYS3arLOhA8si5uUEmHOw' and stars=1 order by useful desc limit 100")
+
+reviews_good_review=spark.sql("select r.text from review r where business_id='DkYS3arLOhA8si5uUEmHOw' and stars=5 order by useful desc limit 100")
+
+
+# In[67]:
+
+
+reviews_bad_review_pd=reviews_bad_review.toPandas()
+reviews_good_review_pd=reviews_good_review.toPandas()
+
+# Let's make some word clouds!
+# Terminal / Anaconda Prompt: conda install -c conda-forge wordcloud
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+from sklearn.feature_extraction import text 
+
+stop_words = text.ENGLISH_STOP_WORDS.union(['good','went','did','didn''t','said','it','pizza','slice','told','order','ordered','food','just','I''m','going','like','really','asked','place','time','got','called','came'])
+
+wc = WordCloud(stopwords=stop_words, background_color="white", colormap="Dark2",
+               max_font_size=150, random_state=42)
+
+import json
+import csv
+import re
+import string
+import pandas as pd
+
+def clean_text(text):
+    '''Make text lowercase, remove text in square brackets, remove punctuation and remove words containing numbers.'''
+    text = text.lower()
+    text = re.sub('\[.*?\]', '', text)
+    text = re.sub('[%s]' % re.escape(string.punctuation), '', text)
+    text = re.sub('\w*\d\w*', '', text)
+    '''Get rid of some additional punctuation and non-sensical text that was missed the first time around.'''
+    text = re.sub('[‘’“”…]', '', text)
+    text = re.sub('\n', '', text)
+    return text
+
+reviews_bad_review_pd['text'] = reviews_bad_review_pd['text'].apply(lambda x: clean_text(x))
+reviews_good_review_pd['text'] = reviews_good_review_pd['text'].apply(lambda x: clean_text(x))
+
+wc.generate(' '.join(reviews_bad_review_pd['text']))
+plt.imshow(wc, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+plt.savefig("C:\\bigdata\sshrung14\yelp_data_analytics\docs\\bad_reviews_word_cloud2.png")
+
+wc.generate(' '.join(reviews_good_review_pd['text']))
+plt.imshow(wc, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+plt.savefig("C:\\bigdata\sshrung14\yelp_data_analytics\docs\\good_reviews_word_cloud2.png")
+
+
+# In[ ]:
+
+
+
 
