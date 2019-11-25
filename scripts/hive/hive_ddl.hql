@@ -29,7 +29,7 @@ STORED AS TEXTFILE;
 --Load the data from HDFS into the created hive table
 load data inpath '/data/business_reviews/*.csv' into table yelp.business_reviews;
 
-select * from yelp.business_reviews limit 10;
+--select * from yelp.business_reviews limit 10;
 
 --Create table for storing checkins by date for each business
 CREATE TABLE yelp.checkins_by_date_by_business
@@ -42,6 +42,6 @@ FIELDS TERMINATED BY ','
 STORED AS TEXTFILE;
 
 --Load the data from HDFS into the created hive table
-load data inpath '/data/checkins_by_date_by_business/*.csv' into table yelp.checkins_by_date_by_business;
+load data inpath '/data/checkins_by_date_by_business/part*' into table yelp.checkins_by_date_by_business;
 
-select * from yelp.checkins_by_date_by_business limit 10;
+--select * from yelp.checkins_by_date_by_business limit 10;

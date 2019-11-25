@@ -10,7 +10,7 @@ exit 1
 fi
 
 #Executing pig script for exploding checkins data into individual rows
-pig -x mapreduce process_checkins_dataset.pig
+pig -x mapreduce process_checkins_dataset.pig > output.msg 2> output.err
 
 if [ $? -eq 0 ]
 then
@@ -22,7 +22,7 @@ fi
 
 
 #Execute the pyspark script to transform the reviews and business data
-pyspark data_preprocessing_and_transformations.py
+spark-submit data_preprocessing_and_transformations.py
 
 if [ $? -eq 0 ]
 then
