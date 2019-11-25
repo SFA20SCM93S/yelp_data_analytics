@@ -12,7 +12,14 @@ Analytics - From a Business perspective, we will analyze the data in the followi
   3. Checkins by day of the week - This indicates when to the customers like to visit the business
   4. Checkins by hour - This indicates popular time of the business, which would help determine operating hours as well as better staff allocation to serve the customers
   5. Average review over time - Helps determine customer response to changing corporate strategy
-  6. Top useful reviews - To get an idea of what users say about the business
-  7. Top words in reviews - Using a word cloud by filtering the reviews for STOP words
-  8. Split good reviews and build a word cloud
-  9. Split bad reviews and build a word cloud
+  6. Top words in reviews - Using a word cloud by filtering the reviews for STOP words
+   i. Split good reviews and build a word cloud
+   ii. Split bad reviews and build a word cloud
+  
+  Analytics - Yelp Perspective
+  1. Top States and Cities by Reviews
+  2. Top Businesses with high rreview counts
+  3. Ratings vs Reviews
+  4. Top restaurants in the number of listed categories
+  5. Top businesses with cool rated reviews
+  6. Top categories used in business reviews
